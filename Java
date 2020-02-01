@@ -1,0 +1,59 @@
+import org.apache.commons.codec.binary.StringUtils;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+public class IuaTest {
+
+   private WebDriver driver;
+
+    @BeforeClass
+    public void setup() {
+
+       //String property = System.getProperty("user.dir") + "/driver/chromedriver.exe";
+       System.setProperty("webdriver.chrome.driver", "/driver/chromedriver.exe");
+       driver = new ChromeDriver();
+       driver.manage().window().maximize();
+
+    }
+    @Test
+    public void userLogin() {
+        driver.get("http://www.i.ua/");
+
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+
+        WebElement loginButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href='//passport.i.ua/login/']")));
+        loginButton.click();
+
+        WebElement loginName = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("input[name='login']")));
+        loginName.clear();
+        loginName.sendKeys("AllaTest@i.ua");
+
+        WebElement loginPassword = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("input[name='login_password']")));
+        loginPassword.sendKeys("Test");
+
+        WebElement submitButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("input[type='submit']")));
+        submitButton.click();
+
+        WebElement mailButton = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href='submit']")));
+        mailButton.click();
+
+        String header = driver.findElement(By.cssSelector("span[class='sn_menu_title']")).getText();
+        // Verify that header equals "AllaTest@i.ua"
+        Assert.assertEquals(header, "AllaTest@i.ua");
+
+    }
+
+    @AfterClass
+    public void tearDown() {
+        driver.quit();
+    }
+
+
+
+}
